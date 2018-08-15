@@ -1,5 +1,3 @@
-//document.getElementById("playButton").onclick = test();
-import 
-function test(){
-    
-}
+//Imports the animator
+import Animator from "./animator.js";
+var animator = new Animator();

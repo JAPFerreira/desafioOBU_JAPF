@@ -7,10 +7,9 @@ export var howManyColors = 3;
 export var colorInterval = 10;
 //number of ball to animate.
 export var howManyBalls = 30;
-//
-export var colors = {
-    "RED":"",
-    "BLUE": "",
-    "YELLOW": "",
-    "GREEN": ""
-}
+//defines if a list of colors should be used
+export var useColorsList = false;
+//list of colors to use. 
+export var colorsToUse = ["BLUE", "RED", "YELLOW"]
+//the html id name of the container to intorduce the balls in
+export var container = "ballGameContainer";
