@@ -15,3 +15,5 @@ export var colorsToUse = ["BLUE", "RED", "YELLOW"]
 export var container = "ballGameContainer";
 //the duration of the ball animation in milliseconds
 export var animationDuration = 3000;
+//maximum travel distance of a ball
+export var ballTravelDistance = 300;

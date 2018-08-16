@@ -18,16 +18,21 @@ export function BallGenerator(howManyColors, colorInterval, colorsList) {
 /**
  * Creates the balls for the ball game.
  * @param {number} number Total number of balls. The balls generated will obey the color restrictions established for this generator.
- * @param {string} container The HTML id of the container for the balls.
- * @returns {Array<JSON>} The list of balls generated in JSON objects with the color to be used and the number attributed to the ball.
+ * @returns {Array<Object>} The list of balls generated in JSON objects with the color to be used and the number attributed to the ball.
  */
-BallGenerator.prototype.createBalls = function (number, container) {
+BallGenerator.prototype.createBalls = function (number) {
     if (number >= 1) {
         var balls = [];
+        var coloredSize = Math.round(number / this.howManyColors);
+
         for (let index = 0; index < number; index++) {
-            balls.push();
+            var ball = new Ball();
+            balls.push(ball);
         }
+        return balls;
+    }else{
+        return null;
     }
-    return balls
+    
 }
 

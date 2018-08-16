@@ -21,7 +21,8 @@ export function BallAnimator() {
  * Initiates the animator, creating the balls and placing them on screen.
  */
 BallAnimator.prototype.init = function () {
-    this.balls = gen.createBalls(howManyBalls, ballsContainer);
+    //the balls are stored in a list, but between them is formed a linked list structure, where each ball knows the previous and the nex ball in the animation sequence.
+    this.balls = gen.createBalls(howManyBalls);
     //places the balls created by the generator on screen.
 
 }
@@ -31,7 +32,7 @@ BallAnimator.prototype.init = function () {
  * Plays the ball animation.
  */
 BallAnimator.prototype.play = function(){
-    animateBalls({timing: powerOfNReverseCurve(), draw: drawBalls(), duration: animationDuration});
+    var intId = setInterval(drawBalls, 20);
 }
 
 
@@ -39,7 +40,9 @@ BallAnimator.prototype.play = function(){
  * Redraws every ball to its new position. Each ball decides whether it should be redrawn or not.
  */
 function drawBalls(){
-
+    this.balls.forEach(element => {
+        element.draw();
+    });
 }
 
 
@@ -66,7 +69,7 @@ function animateBalls({ timing, draw, duration }) {
         draw(progress); // draw it
 
         if (timeFraction < 1) {
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateBalls);
         }
     });
 }
