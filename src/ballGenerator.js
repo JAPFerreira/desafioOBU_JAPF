@@ -1,5 +1,7 @@
 //Imports the list of ball colors. It's a JSON object that also contains the file path to the correct ball image to use.
 import { colors } from "./colors.js";
+//Imports the ball class to create balls
+import Ball from "./Ball.js"
 
 /**
  * Creates a new BallGenerator, a class used to generate new balls for the ball game.
@@ -11,7 +13,6 @@ export function BallGenerator(howManyColors, colorInterval, colorsList) {
     this.howManyColors = howManyColors;
     this.colorInterval = colorInterval;
     if (colorsList) this.colorsList = colorsList;
-
 }
 
 /**

@@ -13,3 +13,5 @@ export var useColorsList = false;
 export var colorsToUse = ["BLUE", "RED", "YELLOW"]
 //the html id name of the container to intorduce the balls in
 export var container = "ballGameContainer";
+//the duration of the ball animation in milliseconds
+export var animationDuration = 3000;

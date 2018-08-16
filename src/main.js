@@ -1,3 +1,8 @@
 //Imports the animator
-import Animator from "./animator.js";
-var animator = new Animator();
+import { BallAnimator } from "./BallAnimator.js";
+var animator = new BallAnimator();
+animator.init();
+
+function play(){
+    animator.play();
+}
