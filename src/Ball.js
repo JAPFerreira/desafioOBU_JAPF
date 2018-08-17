@@ -1,10 +1,14 @@
 
+
 /**
  * Creates a new Ball for the ball animation.
- * @param {string} img The file path to the ball image to be used 
+ * @param {string} img The file path to the ball image to be used .
  * @param {number} number The random number given to this ball.
+ * @param {string} id The HTML id for this ball.
+ * @param {} prevBall The previous ball in the animation sequence.
+ * @param {} nextBall The next ball in the animation sequence.
  */
-export function Ball(img, number, id, prevBall, nextBall){
+function Ball(img, number, id, prevBall, nextBall){
     this.image = img;
     this.number = number;
     this.previousBall = prevBall;
@@ -15,11 +19,4 @@ export function Ball(img, number, id, prevBall, nextBall){
     this.arrived = false;
     this.isStopped = true;
     this.id = id;
-}
-
-/**
- * Redraws the ball in its next position, paying attention to the ball's records of its animation up to that point.
- */
-Ball.prototype.draw = function(){
-    
 }
