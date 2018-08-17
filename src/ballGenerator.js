@@ -21,10 +21,11 @@ function BallGenerator(howManyColors, colorInterval, gridLines) {
 /**
  * Creates the balls for the ball game.
  * @param {number} number Total number of balls. The balls generated will obey the color restrictions established for this generator.
- * @returns {Array<JSON>} The list of balls generated in JSON objects with the color to be used and the number attributed to the ball.
+ * @param {Array<string>} colorsToUse List of colors to use in the animation. The columns of balls will have colors corresponding to each one named in this list.
+ * @returns {Array<Ball>} The list of balls generated.
  */
-BallGenerator.prototype.createBalls = function (number, colorsToUse) {
-    if (number >= 1) {
+BallGenerator.prototype.createBalls = function (number, colorsToUse, callback) {
+    if (number >= 1 && number <=60) {
         var balls = [];
 
         var ballId = "ball";
@@ -32,17 +33,16 @@ BallGenerator.prototype.createBalls = function (number, colorsToUse) {
         //list of random numbers already used
         var usedNumbers = [];
         var ball;
-        var prevBall;
         for (let index = 0; index < number; index++) {
+            //generating random number until a new one is found
             var ballNumber = Math.floor((Math.random() * 60) + 1);
             while (usedNumbers.includes(ballNumber)) {
                 ballNumber = Math.floor((Math.random() * 60) + 1);
             }
             usedNumbers.push(ballNumber);
-            ball = new Ball("",ballNumber, ballId+idNumber, ball, undefined);
-            prevBall.nextBall = ball;
-            prevBall = ball;
+            ball = new Ball("",ballNumber, ballId+idNumber);
             balls.push(ball);
+            idNumber++;
         }
 
         //adding the correct picture source for every ball created
@@ -59,11 +59,13 @@ BallGenerator.prototype.createBalls = function (number, colorsToUse) {
         var colorIndex = 0;
         for(let index = 0; index<columns; index++){
             let toUpdate;
+            //if we have enough balls to update to fill a full column or if there's a smaller amount
             if(ballsToUpdate>=gridLines){
                 toUpdate = gridLines;
             }else{
                 toUpdate = ballsToUpdate;
             }
+
             for (let i = updateStartPoint; i < updateStartPoint+toUpdate; i++) {
                 balls[i].image=colors[colorsToUse[colorIndex]];
             }
@@ -74,11 +76,10 @@ BallGenerator.prototype.createBalls = function (number, colorsToUse) {
                 colorIndex=0;
             }
         }
-
-        return balls;
-    } else {
-        return null;
+        callback(balls);
+    }else{
+        callback(null);
     }
-
+    
 }
 

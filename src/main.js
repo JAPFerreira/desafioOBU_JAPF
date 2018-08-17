@@ -13,20 +13,16 @@ var useColorsList = false;
 var colorsToUse = ["RED", "RED", "RED"]
 //the html id name of the container to intorduce the balls in
 var ballsContainerID = "ballGameContainer";
-//the duration of the ball animation in milliseconds
-var animationDuration = 3000;
-//maximum travel distance of a ball
-var ballTravelDistance = 300;
 //number of lines the ball grid has
 var gridLines = 10;
 
 var animator;
 
-document.onload(start());
+//document.onload(start());
 
 function start() {
     animator = new BallAnimator(howManyBalls, colorInterval, gridLines);
-    animator.init(ballsContainerID, gridLines);
+    animator.init(ballsContainerID, gridLines, colorsToUse);
 };
 
 function play(){
