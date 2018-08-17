@@ -2,65 +2,87 @@
 var animationDuration = 3000;
 //maximum travel distance of a ball
 var ballTravelDistance = 300;
+//the distance a ball should travel before the next ball starts moving.
+var ballDistance = 25;
 
+//the list of balls in the animation
+var balls;
+//the animation timer
 var timer;
+//whether the lattest animation has finished or not
+var finished = false;
+//whether this animator is playing an animation or not
+var playing=false;
+
+
+var ballsContainer;
+var lines;
+var colorsList;
+
 /**
  * Creates a new Animator, responsible for controlling the animation of the balls. It also requests the generation of new balls.
  */
 function BallAnimator(howManyColors, colorInterval, gridLines) {
-    //if the ball generator should use a specific color list
     this.howManyBalls = howManyBalls;
     this.colorInterval = colorInterval;
     this.generator = new BallGenerator(howManyColors, colorInterval, gridLines);
-    this.balls = null;
-    this.playing = false;
+    balls = null;
 }
 
 
 /**
  * Initiates the animator, creating the balls and placing them on screen.
+ * @param {string} ballsContainerID HTML id name of the ball animation container.
+ * @param {number} gridLines How many lines the ball grid should have.
+ * @param {Array<string>} colorsToUse The list of colors to be used. They will be applied in the provided order.
  */
 BallAnimator.prototype.init = function (ballsContainerID, gridLines, colorsToUse) {
-    that = this;
+    ballsContainer = ballsContainerID;
+    lines = gridLines;
+    colorsList = colorsToUse;
+    //cleans the ball container to restart the animation
+    var containerNode = document.getElementById(ballsContainerID);
+    while (containerNode.firstChild) {
+        containerNode.removeChild(containerNode.firstChild);
+    }
     this.generator.createBalls(howManyBalls, colorsToUse, function (ballsCreated) {
-        if(ballsCreated){
-            that.balls=ballsCreated;
-        //placing the balls in a grid with 50px-50px squares
-        //the balls are placed in the order they are contained in the balls list and start at the right most column
+        if (ballsCreated) {
+            balls = ballsCreated;
+            //placing the balls in a grid with 50px-50px squares
+            //the balls are placed in the order they are contained in the balls list and start at the right most column
 
-        let columnsNotRounded = howManyBalls / gridLines;
-        let columns = Math.round(howManyBalls / gridLines);
-        //if the number of balls required does not allow for a complete last column, but the rounding ignores this
-        //an extra column needs to be added, but this one will be an incomplete one with less than gridLines balls
-        if (columnsNotRounded > columns) columns++;
-        let container = document.getElementById(ballsContainerID);
+            let columnsNotRounded = howManyBalls / gridLines;
+            let columns = Math.round(howManyBalls / gridLines);
+            //if the number of balls required does not allow for a complete last column, but the rounding ignores this
+            //an extra column needs to be added, but this one will be an incomplete one with less than gridLines balls
+            if (columnsNotRounded > columns) columns++;
+            let container = document.getElementById(ballsContainerID);
 
-        //the horizontal distance in pixels the balls need to be placed at
-        var xpx = columns * 50;
-        //the vertical distance in pixels the balls need to be placed at
-        var ypx = 0;
+            //the horizontal distance in pixels the balls need to be placed at
+            var xpx = columns * 50;
+            //the vertical distance in pixels the balls need to be placed at
+            var ypx = 0;
 
-        for (let index = 0; index < howManyBalls; index++) {
-            if (index % gridLines == 0) {
-                xpx -= 50;
-                ypx = 0;
+            for (let index = 0; index < howManyBalls; index++) {
+                if (index % gridLines == 0) {
+                    xpx -= 50;
+                    ypx = 0;
+                }
+                var div = document.createElement("div");
+                div.className = "ball";
+                div.id = balls[index].id;
+                var bImg = document.createElement("img");
+                bImg.setAttribute("src", balls[index].image);
+                bImg.setAttribute("height", "50");
+                bImg.setAttribute("width", "50");
+                div.appendChild(bImg);
+                div.style.left = xpx + 'px';
+                div.style.top = ypx + 'px';
+                balls[index].x = xpx;
+                container.appendChild(div);
+                ypx += 50;
             }
-            var div = document.createElement("div");
-            div.className = "ball";
-            div.id = that.balls[index].id;
-            var bImg = document.createElement("img");
-            bImg.setAttribute("src", that.balls[index].image);
-            bImg.setAttribute("height", "50");
-            bImg.setAttribute("width", "50");
-            bImg.setAttribute("alt", "RedBall");
-            div.appendChild(bImg);
-            div.style.left = xpx + 'px';
-            div.style.top = ypx + 'px';
-            that.balls[index].x=xpx;
-            container.appendChild(div);
-            ypx += 50;
-        }
-        }else{
+        } else {
             alert("Number of balls requested is not valid.");
         }
     });
@@ -71,61 +93,70 @@ BallAnimator.prototype.init = function (ballsContainerID, gridLines, colorsToUse
  * Plays the ball animation.
  */
 BallAnimator.prototype.play = function () {
-    if(!this.playing){
-        this.playing = true;
+    if (!playing) {
+        playing = true;
         this.playAnimation();
-    }else{
-        this.playing = false;
-        this.stopAnimation();
+    } else {
+        playing = false;
+        stopAnimation();
     }
 }
 
 /**
  * Starts the animation process.
  */
-BallAnimator.prototype.playAnimation=function() {
-    if (!timer) timer = setInterval(this.animate(this.balls), 30);
+BallAnimator.prototype.playAnimation = function () {
+    if (finished) {
+        this.init(ballsContainer, lines, colorsList);
+    }
+    finished=false;
+    if (!timer) timer = setInterval(this.animate, 20);
+}
+
+
+/**
+ * Redraws every ball to its new position. Each ball decides whether it should be redrawn or not.
+ */
+BallAnimator.prototype.animate = function () {
+    for (let index = 0; index < balls.length; index++) {
+        const element = balls[index];
+        drawBall(element, index);
+    }
 }
 
 /**
  * Stops/Pauses the animation process.
  */
-BallAnimator.prototype.stopAnimation = function() {
+function stopAnimation() {
     if (!timer) return false;
     clearInterval(timer);
     timer = null;
+    playing = false;
 }
 
-/**
- * Redraws every ball to its new position. Each ball decides whether it should be redrawn or not.
- */
-BallAnimator.prototype.animate=function(balls) {
-    for (let index = 0; index < balls.length; index++) {
-        const element = balls[index];
-        this.drawBall(element, index);
-    }
-}
+
 
 /**
  * Animates a new frame of a ball's animation.
  * @param {Ball} ball The ball to animate.
  */
-BallAnimator.prototype.drawBall=function(ball, index){
+function drawBall(ball, index) {
     var elem = document.getElementById(ball.id);
     //if the previous ball has departed or this one is the first one AND it has not yet arrived at its destination.
-    if((index-1<0 || this.balls[index-1].departed) && !ball.arrived){
-        if(ball.distanceTraveled==ballTravelDistance){
-            ball.arrived=true;
+    if ((index - 1 < 0 || balls[index - 1].departed) && !ball.arrived) {
+        if (ball.distanceTraveled == ballTravelDistance-1) {
+            ball.arrived = true;
         }
-        ball.departed=true;
-        elem.style.left = ball.x+1 + 'px';
+        elem.style.left = ball.x + 1 + 'px';
         ball.distanceTraveled++;
+        if (!ball.departed && ball.distanceTraveled > ballDistance) ball.departed = true;
         ball.x++;
     }
     //if the last ball has just arrived at its destination we stop the animation.
-    if(index==this.balls.length-1){
-        if(ball.arrived){
-            this.stopAnimation();
+    if (index == balls.length - 1) {
+        if (ball.arrived) {
+            stopAnimation();
+            finished = true;
         }
     }
 }
