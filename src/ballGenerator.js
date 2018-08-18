@@ -1,17 +1,15 @@
-//The list of available ball colors and the file paths to the corresponding ball images
-var colors = {
-    "RED": "./assets/images/red-ball.jpg",
-    "BLUE": "./assets/images/blue-ball.jpg",
-    "YELLOW": "./assets/images/yellow-ball.jpg",
-    "GREEN": "./assets/images/green-ball.jpg"
-}
-
-
 /**
  * Creates a new BallGenerator, a class used to generate new balls for the ball game.
  * @param {number} colorInterval The number of balls that should be generated with a particular color before generating balls with the next color.
  */
 function BallGenerator(colorInterval, gridLines) {
+    //The list of available ball colors and the file paths to the corresponding ball images
+    const colors = {
+        "RED": "./assets/images/red-ball.png",
+        "BLUE": "./assets/images/blue-ball.png",
+        "YELLOW": "./assets/images/yellow-ball.png"
+    }
+
     this.colorInterval = colorInterval;
     this.gridLines = gridLines;
 

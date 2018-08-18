@@ -1,39 +1,41 @@
-//the duration of the ball animation in milliseconds
-var animationDuration;
-//maximum travel distance of a ball
-var ballTravelDistance = 300;
-//the distance a ball should travel before the next ball starts moving.
-var ballDistance = 25;
-
-//the container the ball will be animated in
-var ballsContainer;
-//the number of lines the grid of ball will have
-var lines;
-//the color sequence to be used
-var colorSequence;
-//number of balls this animator manages and animates
-var numberBalls;
-//how many balls of one color before changing to another
-var interval;
-
-//the ball generator used to create the Ball objects
-var generator;
-//the list of balls in the animation
-var balls;
-//the animation timer
-var timer;
-//whether the lattest animation has finished or not
-var finished = false;
-//whether this animator is playing an animation or not
-var playing = false;
-
-
-
 /**
  * Creates a new Animator, responsible for controlling the animation of the balls. Requests their creation and adds them to the document.
  */
 function BallAnimator() {
+    //the duration of the ball animation in milliseconds.
+    var animationDuration;
+    //maximum travel distance of a ball.
+    var ballTravelDistance = 300;
+    //the distance a ball should travel before the next ball starts moving.
+    var ballDistance = 25;
 
+    //the container the ball will be animated in.
+    var ballsContainer;
+    //the number of lines the grid of ball will have.
+    var lines;
+    //the color sequence to be used.
+    var colorSequence;
+    //number of balls this animator manages and animates.
+    var numberBalls;
+    //how many balls of one color before changing to another.
+    var interval;
+
+    //the ball generator used to create the Ball objects.
+    var generator;
+    //the list of balls in the animation.
+    var balls;
+    //the animation timer.
+    var timer;
+    //whether the lattest animation has finished or not.
+    var finished = false;
+    //whether this animator is playing an animation or not.
+    var playing = false;
+
+    //the audio cotroller for the animation sounds.
+    var audioController;
+
+    audioController = new AudioController();
+    audioController.init();
     /**
     * Initiates the animator, creating the balls and placing them on screen.
     * @param {number} howManyBalls The number of balls the animator should animate.
@@ -71,12 +73,12 @@ function BallAnimator() {
                 var xpx = columns * 50;
                 //the vertical distance in pixels the balls need to be placed at
                 var ypx = 0;
-
                 for (let index = 0; index < howManyBalls; index++) {
                     if (index % gridLines == 0) {
                         xpx -= 50;
                         ypx = 0;
                     }
+                    //assembling the div for a ball
                     var div = document.createElement("div");
                     div.className = "ball";
                     div.id = balls[index].id;
@@ -88,6 +90,11 @@ function BallAnimator() {
                     div.style.left = xpx + 'px';
                     div.style.top = ypx + 'px';
                     balls[index].x = xpx;
+                    //add the ball number
+                    var numberElem = document.createElement("div");
+                    numberElem.className = "ballNumber";
+                    numberElem.innerHTML += balls[index].number;
+                    div.appendChild(numberElem);
                     container.appendChild(div);
                     ypx += 50;
                 }
@@ -145,13 +152,20 @@ function BallAnimator() {
     /**
     * Animates a new frame of a ball's animation.
     * @param {Ball} ball The ball to animate.
+    * @param {number} index The index of the ball in the balls list.
     */
-    drawBall=function(ball, index) {
+    drawBall = function (ball, index) {
         var elem = document.getElementById(ball.id);
         //if the previous ball has departed or this one is the first one AND it has not yet arrived at its destination.
         if ((index - 1 < 0 || balls[index - 1].departed) && !ball.arrived) {
             if (ball.distanceTraveled == ballTravelDistance - 1) {
                 ball.arrived = true;
+                //play prime number sound else play normal sound;
+                if (isPrime(ball.number)) {
+                    audioController.play("PRIME");
+                } else {
+                    audioController.play("NON-PRIME");
+                }
             }
             elem.style.left = ball.x + 1 + 'px';
             ball.distanceTraveled++;
@@ -170,6 +184,20 @@ function BallAnimator() {
 }
 
 
+/**
+ * Utility function to determine if a given number is prime.
+ * @param {number} number The number to check if it is prime.
+ */
+function isPrime(number) {
+    for (var i = 2; i < number; i++) {
+        if (number % i === 0) {
+            return false;
+        }
+    }
+    return number > 1;
+}
+
+
 
 
 /**
@@ -178,9 +206,8 @@ function BallAnimator() {
  * @param draw The function to redraw all the balls.
  * @param duration How long the animation should take in milliseconds. 
  */
-function animateBalls({ timing, draw, duration }) {
+function animateBalls(timing, draw, duration) {
     let startTime = performance.now();
-    that = this;
     requestAnimationFrame(function animate(time) {
         // timeFraction goes from 0 to 1. It represents the fraction of the total time the animation should last that has been used.
         let timeFraction = (time - startTime) / duration;
@@ -198,7 +225,7 @@ function animateBalls({ timing, draw, duration }) {
         }
 
         if (timeFraction < 1) {
-            requestAnimationFrame(animateBalls);
+            requestAnimationFrame(animate);
         }
     });
 }

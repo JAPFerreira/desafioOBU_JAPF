@@ -18,3 +18,12 @@
     height: 50px;
     position: absolute;
 }
+
+.ballNumber{
+    position: absolute;
+    top: 15px;
+    left: 17px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    color: black;
+}

@@ -17,8 +17,6 @@ function Ball(img, number, id){
     this.departed = false;
     //whether this ball has arrived at its destination, meaning it has finished its animation.
     this.arrived = false;
-    //whether this ball has been stoped during its animation.
-    this.isStopped = true;
     //the HTML element id that corresponds to this ball.
     this.id = id;
     //this ball's style.left value, indicating its horizontal position in the ball container.

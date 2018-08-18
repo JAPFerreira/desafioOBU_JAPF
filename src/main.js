@@ -1,11 +1,11 @@
 //number of balls of a same color that should be created before changing to another color.
-var colorInterval = 10;
+var colorInterval = 2;
 //number of ball to animate.
 var howManyBalls = 30;
 //defines if a list of colors should be used
 var useColorsList = false;
 //list of colors to use. 
-var colorsToUse = ["RED", "BLUE", "RED"]
+var colorsToUse = ["RED", "BLUE", "YELLOW"];
 //the html id name of the container to intorduce the balls in
 var ballsContainerID = "ballGameContainer";
 //number of lines the ball grid has
@@ -14,7 +14,6 @@ var gridLines = 10;
 var animationDuration = 3000;
 //how far should a ball move in pixels
 var animationDistance = 300;
-
 //the animator to control the animation process
 var ballAnimator;
 
