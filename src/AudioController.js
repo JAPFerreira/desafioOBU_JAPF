@@ -17,7 +17,7 @@ function AudioController() {
 
 
     //max number of audio channels to use
-    const channels = 10;
+    const channels = 15;
     //the audio channels list
     var audioChannels;
 
