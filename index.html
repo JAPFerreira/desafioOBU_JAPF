@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,15 +16,21 @@
 
     <audio id="non-prime-sound" src="./assets/sound/non-prime.mp3"></audio>
     <audio id="prime-sound" src="./assets/sound/prime.mp3"></audio>
-    
+
 </head>
+
 <body>
-    <div id="playDiv"><input type="button" id="playButton" onclick="playFR();" value="PLAY"/></div>
-    <div id="ballGameContainer"></div>
-    <div id="resultsTitle">Prime Numbers:</div>
-    <div id="resultsContainer"></div>
+    <div id="playDiv"><input type="button" id="playButton" onclick="playFR();" /></div>
+    <div id="main-game">
+            <div id="ballGameContainer"></div>
+            <div id="results">
+                <div id="resultsTitle">Prime Numbers:</div>
+                <div id="resultsContainer"></div>
+            </div>
+    </div>
     <script type="text/javascript">
         initAnimator();
     </script>
 </body>
+
 </html>

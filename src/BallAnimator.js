@@ -285,8 +285,8 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     }
 
     /**
-     * Calculates the progress according to the time fraction of the animation of a ball. Creates a accelerating movement in the first half of the animation and a slowing movement in the second half.
-     * @param {number} timeFraction The time fraction, between 0 and 1, representing how much of the animation has been completed.
+     * Calculates the progress according to the time fraction of the animation of a ball. Creates an accelerating movement in the first half of the animation and a slowing movement in the second half.
+     * @param {number} timeFraction The time fraction, between 0 and 1, representing how much of the animation time has been used.
      */
     function ballMovementTiming(timeFraction) {
         if (timeFraction <= 0.5) { // first half of the animation
