@@ -27,3 +27,20 @@
     font-weight: bold;
     color: black;
 }
+
+#resultsTitle{
+    width: 450px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#resultsContainer{
+    width: 450px;
+    height: 150px;
+    position: relative;
+    background: yellow;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -8,9 +8,11 @@ var useColorsList = false;
 var colorsToUse = ["RED", "BLUE", "YELLOW"];
 //the html id name of the container to intorduce the balls in
 var ballsContainerID = "ballGameContainer";
+//the html id of the container for the prime balls detected
+var resultsContainerID = "resultsContainer";
 //number of lines the ball grid has
 var gridLines = 10;
-//how long the animation of a ball should take, in milliseconds
+//how long the animation should take, in milliseconds
 var animationDuration = 3000;
 //how far should a ball move in pixels
 var animationDistance = 300;
@@ -25,7 +27,7 @@ var ballAnimator;
  */
 function initAnimator() {
     ballAnimator = new BallAnimator(animationDuration, animationDistance, ballAnimationDuration);
-    ballAnimator.init(howManyBalls, ballsContainerID, gridLines, colorsToUse, colorInterval, gridLines);
+    ballAnimator.init(howManyBalls, ballsContainerID, resultsContainerID, gridLines, colorsToUse, colorInterval, gridLines);
 };
 
 /**
