@@ -10,6 +10,8 @@ var colorsToUse = ["RED", "BLUE", "YELLOW"];
 var ballsContainerID = "ballGameContainer";
 //the html id of the container for the prime balls detected
 var resultsContainerID = "resultsContainer";
+//the html id of a ball element
+var ballID = "ball";
 //number of lines the ball grid has
 var gridLines = 10;
 //how long the animation should take, in milliseconds
@@ -17,7 +19,7 @@ var animationDuration = 3000;
 //how far should a ball move in pixels
 var animationDistance = 300;
 //how long it should take for one ball to complete its animation
-var ballAnimationDuration = 700;
+var ballAnimationDuration = 1000;
 //the animator to control the animation process
 var ballAnimator;
 
@@ -27,7 +29,7 @@ var ballAnimator;
  */
 function initAnimator() {
     ballAnimator = new BallAnimator(animationDuration, animationDistance, ballAnimationDuration);
-    ballAnimator.init(howManyBalls, ballsContainerID, resultsContainerID, gridLines, colorsToUse, colorInterval, gridLines);
+    ballAnimator.init(howManyBalls, ballID, ballsContainerID, resultsContainerID, gridLines, colorsToUse, colorInterval, gridLines);
 };
 
 /**

@@ -11,16 +11,14 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     var ballTravelDistance = ballTravelDistance;
     //the time one ball should take to complete its animation.
     var ballAnimationDuration = ballAnimationDuration;
-    //the distance a ball must travel befor allowing another to start moving in the interval animation method
-    var interBallDistance = 20;
-    //the last point in time the animation was started
-    var lastAnimationStartTime;
     //id of the request used in the frame request animation method
     this.frameRequestId = null;
     //the container the ball will be animated in.
     var ballsContainer;
     //the container for the prime balls
     var primeBallsContainer;
+    //a ball element's id
+    var ballId;
     //the number of lines the grid of ball will have.
     var lines;
     //the color sequence to be used.
@@ -30,37 +28,36 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     //how many balls of one color before changing to another.
     var interval;
     //the ball generator used to create the Ball objects.
-    var generator;
+    var ballGenerator;
     //the list of balls in the animation.
     var balls;
     //the list of prime balls generated in one animation.
     var primeBalls;
-    //timer to used in interval animation
-    var timer;
-    //speed of a ball in px per frame
-    var speed = 2;
     //whether the lattest animation has finished or not.
     var finished = false;
     //whether this animator is playing an animation or not.
     var playing = false;
     //the audio cotroller for the animation sounds.
     var audioController;
+    var ballGenerator;
 
     audioController = new AudioController();
     audioController.init();
+    ballGenerator = new BallGenerator();
 
     /**
     * Initiates the animator, creating the balls and placing them on screen.
     * @param {number} howManyBalls The number of balls the animator should animate.
+    * @param {string} ballID The HTML id to use for the ball element.
     * @param {string} ballsContainerID HTML id name of the ball animation container.
     * @param {string} primeBallsContainerID HTML id of the container for the prime balls found at the end of one animation.
     * @param {number} gridLines How many lines the ball grid should have.
     * @param {Array<string>} colorsToUse The list of colors to be used. They will be applied in the provided order.
     * @param {number} colorInterval The number of ball that should appear with one of the colors in the list of colors to use, before switching over to the next color.
     */
-    this.init = function (howManyBalls, ballsContainerID, primeBallsContainerID, gridLines, colorsToUse, colorInterval) {
-        generator = new BallGenerator(colorInterval, gridLines);
+    this.init = function (howManyBalls, ballID, ballsContainerID, primeBallsContainerID, gridLines, colorsToUse, colorInterval) {
         numberBalls = howManyBalls;
+        ballId = ballID;
         ballsContainer = ballsContainerID;
         primeBallsContainer = primeBallsContainerID;
         lines = gridLines;
@@ -76,7 +73,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
         while (resultsContainer.firstChild) {
             resultsContainer.removeChild(resultsContainer.firstChild);
         }
-        generator.createBalls(howManyBalls, colorsToUse, function (ballsCreated) {
+        ballGenerator.createBalls(howManyBalls, colorsToUse, colorInterval, ballID, function (ballsCreated) {
             if (ballsCreated) {
                 balls = ballsCreated;
 
@@ -153,13 +150,13 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
             //if the number of balls required does not allow for a complete last column, but the rounding ignores this
             //an extra column needs to be added, but this one will be an incomplete one with less than gridLines balls
             if (columnsNotRounded > columns) columns++;
-        }else{ //if the number of lines was not specified, the grid will adapt to the container
+        } else { //if the number of lines was not specified, the grid will adapt to the container
             let containerWidth = container.offsetWidth;
-            columnsNotRounded = containerWidth/ballWidth;
-            columns = Math.round(containerWidth/ballWidth);
+            columnsNotRounded = containerWidth / ballWidth;
+            columns = Math.round(containerWidth / ballWidth);
 
             //if there's not enough space for a full ball at the end of the line we remove one column
-            if(columnsNotRounded < columns) columns--;
+            if (columnsNotRounded < columns) columns--;
         }
 
         //the horizontal distance, in pixels, the first ball should be placed in the container
@@ -231,7 +228,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
      */
     function playAnimationFR(animator) {
         if (finished) {
-            animator.init(numberBalls, ballsContainer, primeBallsContainer, lines, colorSequence, interval);
+            animator.init(numberBalls, ballId, ballsContainer, primeBallsContainer, lines, colorSequence, interval);
             finished = false;
         }
         playing = true;

@@ -1,8 +1,7 @@
 /**
  * Creates a new BallGenerator, a class used to generate new balls for the ball game.
- * @param {number} colorInterval The number of balls that should be generated with a particular color before generating balls with the next color.
  */
-function BallGenerator(colorInterval, gridLines) {
+function BallGenerator() {
     //The list of available ball colors and the file paths to the corresponding ball images
     const colors = {
         "RED": "./assets/images/red-ball.png",
@@ -10,27 +9,25 @@ function BallGenerator(colorInterval, gridLines) {
         "YELLOW": "./assets/images/yellow-ball.png"
     }
 
-    this.colorInterval = colorInterval;
-    this.gridLines = gridLines;
 
     /**
     * Creates the balls for the ball game.
     * @param {number} number Total number of balls. The balls generated will obey the color restrictions established for this generator.
     * @param {Array<string>} colorsToUse List of colors to use in the animation. The columns of balls will have colors corresponding to each one named in this list.
+    * @param {number} colorInterval The number of balls of a particular color that should be created before using the next color.
     * @param {Function} callback The callback function that returns the list of balls created. Invoked as callback(balls) where balls is a list of Ball objects.
     */
-    this.createBalls = function (number, colorsToUse, callback) {
+    this.createBalls = function (number, colorsToUse, colorInterval, ballID, callback) {
         if (number >= 1 && number <= 60) {
-            var balls = [];
-
-            var ballId = "ball";
-            var idNumber = 1;
+            let balls = [];
+            let ballId = ballID;
+            let idNumber = 1;
             //list of random numbers already used
-            var usedNumbers = [];
-            var ball;
+            let usedNumbers = [];
+            let ball;
             for (let index = 0; index < number; index++) {
                 //generating random number until a new one is found
-                var ballNumber = Math.floor((Math.random() * 60) + 1);
+                let ballNumber = Math.floor((Math.random() * 60) + 1);
                 while (usedNumbers.includes(ballNumber)) {
                     ballNumber = Math.floor((Math.random() * 60) + 1);
                 }
@@ -41,8 +38,8 @@ function BallGenerator(colorInterval, gridLines) {
             }
 
             //adding the correct colored ball to the object according to the color interval specified
-            var colorCounter = 0;
-            var colorIndex = 0;
+            let colorCounter = 0;
+            let colorIndex = 0;
             for (let index = 0; index < balls.length; index++) {
                 let element = balls[index];
                 element.image = colors[colorsToUse[colorIndex]];
