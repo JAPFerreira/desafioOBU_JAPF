@@ -89,7 +89,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
                     let ball = balls[index];
                     ball.departureTime = index * departureInterval;
                 }
-                assembleBallGrid(balls, gridLines, ballsContainerID, 50, 50, "ball");
+                assembleBallGrid(balls, gridLines, ballsContainerID, 50, 50, "ball", 1, -1, 1);
             } else {
                 alert("Number of balls requested is not valid.");
             }
@@ -129,38 +129,84 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
 
 
     /**
-     * Assembles a grid of balls and adds it to the document.
+     * Assembles a grid of balls and adds it to the document. The number of lines, the container of the list, the size of the balls and even the corner of the grid the list should start at can be specified.
      * @param {number} ballsList The number of balls the grid will have.
-     * @param {number} gridLines The number of lines the grid requires. The number of columns is automatically adapted.
+     * @param {number} gridLines The number of lines the grid requires. The number of columns is automatically adapted. Use 0 if the grid should adapt to the container.
      * @param {string} ballsContainerID The HTML id of the container for the ball grid.
      * @param {number} ballWidth The desired width for a ball.
      * @param {number} ballHeight The desired Height for a ball.
      * @param {string} ballClass The HTML class name for the ball elements in the grid.
+     * @param {number} startLine The line the balls list should start at in the grid. 1 is the top line, -1 is the bottom line.
+     * @param {number} startColumn The column the balls list should start at in the grid. 1 is the leftmost, -1 is the rightmost.
+     * @param {number} assemblingDirecion The direction the grid should be assembled in. 0 is horizontal and no matter where the start point is the grid will be assembled line by line. 1 is vertical and no matter where the start point is the grid will be assembled column by column.
      */
-    function assembleBallGrid(ballsList, gridLines, ballsContainerID, ballWidth, ballHeight, ballClass) {
+    function assembleBallGrid(ballsList, gridLines, ballsContainerID, ballWidth, ballHeight, ballClass, startLine, startColumn, assemblingDirecion) {
         var howManyBalls = ballsList.length;
-        //placing the balls in a grid with 50px-50px squares
-        //the balls are placed in the order they are contained in the balls list and start at the right most column
-        let columnsNotRounded = howManyBalls / gridLines;
-        let columns = Math.round(howManyBalls / gridLines);
-        //if the number of balls required does not allow for a complete last column, but the rounding ignores this
-        //an extra column needs to be added, but this one will be an incomplete one with less than gridLines balls
-        if (columnsNotRounded > columns) columns++;
         let container = document.getElementById(ballsContainerID);
+        var columnsNotRounded;
+        var columns;
+        if (gridLines > 0) { //if the number of lines was specified
+            //placing the balls in a grid with ballWidth px by ballHeight px squares
+            //the balls are placed in the order they are contained in the ballsList and start at (startLine, startColumn)
+            columnsNotRounded = howManyBalls / gridLines;
+            columns = Math.round(howManyBalls / gridLines);
+            //if the number of balls required does not allow for a complete last column, but the rounding ignores this
+            //an extra column needs to be added, but this one will be an incomplete one with less than gridLines balls
+            if (columnsNotRounded > columns) columns++;
+        }else{ //if the number of lines was not specified, the grid will adapt to the container
+            let containerWidth = container.offsetWidth;
+            columnsNotRounded = containerWidth/ballWidth;
+            columns = Math.round(containerWidth/ballWidth);
 
-        //the horizontal distance in pixels the balls need to be placed at starting at the rightmost column
-        var xpx = columns * ballWidth;
-        //the vertical distance in pixels the balls need to be placed at
-        var ypx = 0;
+            //if there's not enough space for a full ball at the end of the line we remove one column
+            if(columnsNotRounded < columns) columns--;
+        }
+
+        //the horizontal distance, in pixels, the first ball should be placed in the container
+        var xpx;
+        if (startColumn == -1) {
+            xpx = columns * ballWidth;
+        } else {
+            xpx = 0 - ballWidth;
+        }
+
+        //the vertical distance, in pixels, the first ball should be placed in the container
+        var ypx;
+        if (startLine == -1) {
+            ypx = gridLines * ballHeight;
+        } else {
+            ypx = 0 - ballHeight;
+        }
+
         for (let index = 0; index < howManyBalls; index++) {
-            if (index % gridLines == 0) {
-                xpx -= ballWidth;
-                ypx = 0;
+            if (assemblingDirecion == 0) { //horizontal assembly
+                //if the assembly is made line by line
+                if (index % columns == 0) {
+                    if (startColumn == 1) {
+                        xpx = 0;
+                    } else {
+                        xpx = ballWidth * columns;
+                    }
+                    ypx += startLine * ballHeight;
+                } else {
+                    xpx += startColumn * ballWidth;
+                }
+            } else { //vertical assembly
+                //if the assembly is made column by column
+                if (index % gridLines == 0) {
+                    if (startLine == 1) {
+                        ypx = 0;
+                    } else {
+                        ypx = ballHeight * gridLines;
+                    }
+                    xpx += startColumn * ballWidth;
+                } else {
+                    ypx += startLine * ballHeight;
+                }
             }
             //assembling the div for a ball
             var div = assembleBallElement(ballsList[index], xpx, ypx, ballClass, ballWidth, ballHeight);
             container.appendChild(div);
-            ypx += ballHeight;
         }
     }
 
@@ -231,8 +277,8 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
                 if (playing) requestAnimationFrame(animate);
             } else {
                 //add the prime balls to the results container
-                if(primeBalls && primeBalls.length > 0){
-                    assembleBallGrid(primeBalls, 2, primeBallsContainer, 50, 50, "ball");
+                if (primeBalls && primeBalls.length > 0) {
+                    assembleBallGrid(primeBalls, 0, primeBallsContainer, 50, 50, "ball", 1, 1, 0);
                 }
                 primeBalls = null;
                 finished = true;
