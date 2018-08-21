@@ -21,8 +21,6 @@ function Ball(img, number, id) {
     this.x = null;
     //the starting position of the ball
     this.startX;
-    //the amount of time this ball has spend in its animation.
-    this.animationTime = 0;
     //the point in time this ball should start its animation.
     this.departureTime = 0;
     //the progress of the animation so far

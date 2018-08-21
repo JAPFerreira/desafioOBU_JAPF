@@ -17,7 +17,7 @@ function AudioController() {
 
 
     //max number of audio channels to use
-    const channels = 15;
+    const channels = 10;
     //the audio channels list
     var audioChannels;
 
@@ -51,13 +51,6 @@ function AudioController() {
                 break;
             }
         }
-    }
-
-    /**
-     * Stops the audio playback.
-     */
-    this.stop = function () {
-
     }
 
 }

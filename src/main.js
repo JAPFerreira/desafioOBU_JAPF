@@ -19,7 +19,7 @@ var animationDuration = 3000;
 //how far should a ball move in pixels
 var animationDistance = 300;
 //how long it should take for one ball to complete its animation
-var ballAnimationDuration = 1000;
+var ballAnimationDuration = 750;
 //the animator to control the animation process
 var ballAnimator;
 
@@ -31,13 +31,6 @@ function initAnimator() {
     ballAnimator = new BallAnimator(animationDuration, animationDistance, ballAnimationDuration);
     ballAnimator.init(howManyBalls, ballID, ballsContainerID, resultsContainerID, gridLines, colorsToUse, colorInterval, gridLines);
 };
-
-/**
- * Orders the animator to begin, pause, or continue the animation of the ballswith the interval animation method.
- */
-function play() {
-    ballAnimator.play(ballAnimator);
-}
 
 /**
  * Orders the animator to begin, pause, or continue the animation of the balls with the frame request animation method.

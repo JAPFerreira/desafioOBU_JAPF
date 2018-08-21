@@ -1,5 +1,5 @@
 /**
- * Creates a new BallGenerator, a class used to generate new balls for the ball game.
+ * Creates a new BallGenerator, a class used to generate new balls for the ball animation.
  */
 function BallGenerator() {
     //The list of available ball colors and the file paths to the corresponding ball images
@@ -12,9 +12,10 @@ function BallGenerator() {
 
     /**
     * Creates the balls for the ball game, giving them random numbers between 1 and 60 and a corresponding color image.
-    * @param {number} number Total number of balls. The balls generated will obey the color restrictions established for this generator.
-    * @param {Array<string>} colorsToUse List of colors to use in the animation. The columns of balls will have colors corresponding to each one named in this list.
+    * @param {number} number Total number of balls to create.
+    * @param {Array<string>} colorsToUse List of colors to use in the animation. These will be applied in the order supplied.
     * @param {number} colorInterval The number of balls of a particular color that should be created before using the next color, depending on the random number attributed to the ball.
+    * @param {string} ballID The desired HTML id for a ball element.
     * @param {Function} callback The callback function that returns the list of balls created. Invoked as callback(balls) where balls is a list of Ball objects.
     */
     this.createBalls = function (number, colorsToUse, colorInterval, ballID, callback) {
@@ -54,6 +55,7 @@ function BallGenerator() {
             }else{
                 numberCheckPoints.push(lastCheckPoint);
             }
+            //the checkpoints list will have values of the points the color changes. Ex: interval of 10, the list will be [1,10,20,30,40,50,60]
 
             //adding the correct colored ball to the object according to the color interval specified and the random number
             for (let index = 0; index < balls.length; index++) {

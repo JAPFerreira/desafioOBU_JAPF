@@ -11,15 +11,13 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     var ballTravelDistance = ballTravelDistance;
     //the time one ball should take to complete its animation.
     var ballAnimationDuration = ballAnimationDuration;
-    //id of the request used in the frame request animation method
-    this.frameRequestId = null;
     //the container the ball will be animated in.
     var ballsContainer;
     //the container for the prime balls
     var primeBallsContainer;
     //a ball element's id
     var ballId;
-    //the number of lines the grid of ball will have.
+    //the number of lines the grid of balls will have.
     var lines;
     //the color sequence to be used.
     var colorSequence;
@@ -39,14 +37,13 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     var playing = false;
     //the audio cotroller for the animation sounds.
     var audioController;
-    var ballGenerator;
 
     audioController = new AudioController();
     audioController.init();
     ballGenerator = new BallGenerator();
 
     /**
-    * Initiates the animator, creating the balls and placing them on screen.
+    * Initiates the animator, creating the balls and placing them on screen in a grid.
     * @param {number} howManyBalls The number of balls the animator should animate.
     * @param {string} ballID The HTML id to use for the ball element.
     * @param {string} ballsContainerID HTML id name of the ball animation container.
@@ -63,16 +60,19 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
         lines = gridLines;
         colorSequence = colorsToUse;
         interval = colorInterval;
+
         //cleans the ball container to restart the animation
         var containerNode = document.getElementById(ballsContainerID);
         while (containerNode.firstChild) {
             containerNode.removeChild(containerNode.firstChild);
         }
+
         //clear the last results
         let resultsContainer = document.getElementById(primeBallsContainer);
         while (resultsContainer.firstChild) {
             resultsContainer.removeChild(resultsContainer.firstChild);
         }
+
         ballGenerator.createBalls(howManyBalls, colorsToUse, colorInterval, ballID, function (ballsCreated) {
             if (ballsCreated) {
                 balls = ballsCreated;
@@ -94,7 +94,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
     }
 
     /**
-     * Assembles a new element to add to the document with a ball.
+     * Assembles a new Ball element to add to the document. It contains a ball.
      * @param {Ball} ball The ball object of the ball element to create.
      * @param {number} x The style.left property of the document element to create.
      * @param {number} y The style.top property of the document element to create.
@@ -143,8 +143,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
         var columnsNotRounded;
         var columns;
         if (gridLines > 0) { //if the number of lines was specified
-            //placing the balls in a grid with ballWidth px by ballHeight px squares
-            //the balls are placed in the order they are contained in the ballsList and start at (startLine, startColumn)
+            //placing the balls in a grid with ballWidth px by ballHeight px blocks
             columnsNotRounded = howManyBalls / gridLines;
             columns = Math.round(howManyBalls / gridLines);
             //if the number of balls required does not allow for a complete last column, but the rounding ignores this
@@ -154,11 +153,9 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
             let containerWidth = container.offsetWidth;
             columnsNotRounded = containerWidth / ballWidth;
             columns = Math.round(containerWidth / ballWidth);
-
             //if there's not enough space for a full ball at the end of the line we remove one column
             if (columnsNotRounded < columns) columns--;
         }
-
         //the horizontal distance, in pixels, the first ball should be placed in the container
         var xpx;
         if (startColumn == -1) {
@@ -166,7 +163,6 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
         } else {
             xpx = 0 - ballWidth;
         }
-
         //the vertical distance, in pixels, the first ball should be placed in the container
         var ypx;
         if (startLine == -1) {
@@ -184,7 +180,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
                     } else {
                         xpx = ballWidth * columns;
                     }
-                    ypx += startLine * ballHeight;
+                    ypx += startLine * ballHeight; //startLine will be either 1 or -1 making this adition work for the assembly from top to bottom and bottom to top
                 } else {
                     xpx += startColumn * ballWidth;
                 }
@@ -196,7 +192,7 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
                     } else {
                         ypx = ballHeight * gridLines;
                     }
-                    xpx += startColumn * ballWidth;
+                    xpx += startColumn * ballWidth; //startColumn will be either 1 or -1 making this adition work for the assembly from left to right and right to left
                 } else {
                     ypx += startLine * ballHeight;
                 }
@@ -232,14 +228,14 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
             finished = false;
         }
         playing = true;
-        animator.frameRequestId = animateFR(ballMovementTiming, drawBallFR);
+        animateFR(ballMovementTiming, drawBallFR);
     }
 
 
     /**
     * Animates all the balls on screen with frame requests. The balls themselves decide whether they sould be redrawn or not.
-    * @param {Function} drawFunction The function to redraw all the balls. It's called with drawFunction(progress, ball, index), where progress is the fraction of the animation that has been completed, ball is the ball object to animate and index it its index in the balls list.
-    * @param {number} duration How long the animation should take in milliseconds.
+    * @param {Function} timmingFunction The timing function used to determine the fraction of the animation the has been completed, according to the time that passed. Called like timmingFunction(timeFraction) where timeFraction is the fraction of the total animation time of an object that has been completed.
+    * @param {Function} drawFunction The function to redraw all the balls. It's called with drawFunction(ball, index), where ball is the ball object to animate and index is its index in the balls list.
     */
     function animateFR(timmingFunction, drawFunction) {
         var startTime = performance.now();
@@ -321,10 +317,10 @@ function BallAnimator(totalAnimationDuration, ballTravelDistance, ballAnimationD
                     audioController.play("NON-PRIME");
                 }
             } else {
-                //place the ball a distance related to the current progress of this ball's animatioon and not before its starting horizontal position
+                //place the ball a distance related to the current progress of this ball's animation and not before its starting horizontal position
                 elem.style.left = ball.startX + ball.animationProgress * ballTravelDistance + 'px';
                 ball.distanceTraveled = ball.animationProgress * ballTravelDistance;
-                //if this ball has been animated for long enoug to allow another ball to move
+                //if this ball has begun its movement we allow the next ball to move
                 if (!ball.departed && ball.animationProgress > 0) ball.departed = true;
             }
 
